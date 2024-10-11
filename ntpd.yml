@@ -1,0 +1,31 @@
+- name: Deploy and configure NTPD on Ubuntu servers
+  hosts: ntp_servers
+  become: yes
+  tasks:
+    - name: Install ntpd package
+      apt:
+        name: ntp
+        state: present
+        update_cache: yes
+
+    - name: Create ntpd configuration file
+      copy:
+        dest: /etc/ntpd.conf
+        content: |
+          # /etc/ntpd.conf - NTP configuration file
+          
+          driftfile /var/lib/ntp/drift
+          restrict default kod nomodify notrap nopeer noquery
+          restrict 127.0.0.1
+          restrict -6 ::1
+          
+          server 192.168.0.252 minpoll 4 maxpoll 8
+          server 192.168.0.251 minpoll 4 maxpoll 8
+          fudge 192.168.0.0 stratum 10
+        mode: '0644'
+
+    - name: Ensure ntpd service is running and enabled
+      service:
+        name: ntp
+        state: started
+        enabled: yes

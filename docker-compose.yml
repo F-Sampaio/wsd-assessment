@@ -1,0 +1,21 @@
+version: '2.0'
+services:
+  nginx:
+    container_name: nginx
+    image: nginx:1.27.2
+    ports:
+      - "808:80"
+    volumes:
+      - ./nginx-logs/logs:/var/logs/nginx
+    restart: always
+    networks:
+      - nginx
+networks:
+  nginx:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.8.0/24
+
+
+  

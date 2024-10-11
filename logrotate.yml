@@ -1,0 +1,12 @@
+- name: Add logrotate to host
+  hosts: linode
+  become: yes
+
+  tasks:
+    - name: Set up cron job
+      cron:
+        name: "Set logrotate"
+        minute: "*/10"
+        hour: "2-4"
+        job: "/usr/sbin/logrotate /etc/logrotate.conf"
+        state: present

@@ -1,0 +1,77 @@
+- name: Deploy Nagios monitoring configurations
+  hosts: monitoring_server
+  become: yes
+  tasks:
+    - name: Create Nagios configuration for app-vm1
+      copy:
+        dest: /etc/nagios/conf.d/app-vm1.cfg
+        content: |
+          define host {
+              use             linux-server
+              host_name       app-vm1
+              alias           App Server 1
+              address         192.168.0.2
+              max_check_attempts 5
+              check_period    24x7
+              notification_interval 30
+              notification_period  24x7
+          }
+
+          define service {
+              use                 generic-service
+              host_name           app-vm1
+              service_description HTTP
+              check_command       check_http
+              notifications_enabled 1
+          }
+
+    - name: Create Nagios configuration for db-vm1
+      copy:
+        dest: /etc/nagios/conf.d/db-vm1.cfg
+        content: |
+          define host {
+              use             linux-server
+              host_name       db-vm1
+              alias           DB Server 1
+              address         192.168.0.3
+              max_check_attempts 5
+              check_period    24x7
+              notification_interval 30
+              notification_period  24x7
+          }
+
+          define service {
+              use                 generic-service
+              host_name           db-vm1
+              service_description HTTP
+              check_command       check_http
+              notifications_enabled 1
+          }
+
+    - name: Create Nagios configuration for web-vm1
+      copy:
+        dest: /etc/nagios/conf.d/web-vm1.cfg
+        content: |
+          define host {
+              use             linux-server
+              host_name       web-vm1
+              alias           Web Server 1
+              address         192.168.0.4
+              max_check_attempts 5
+              check_period    24x7
+              notification_interval 30
+              notification_period  24x7
+          }
+
+          define service {
+              use                 generic-service
+              host_name           web-vm1
+              service_description HTTP
+              check_command       check_http
+              notifications_enabled 1
+          }
+
+    - name: Restart Nagios to apply changes
+      service:
+        name: nagios
+        state: restarted
